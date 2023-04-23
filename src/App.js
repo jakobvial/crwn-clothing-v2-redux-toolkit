@@ -9,20 +9,26 @@ import Navigation from './routes/navigation/navigation.component';
 import Authentication from './routes/authentication/authentication.component';
 import Shop from './routes/shop/shop.component';
 import Checkout from './routes/checkout/checkout.component';
-import {setCurrentUser} from './store/user/user.action';
+import {setCurrentUser} from './store/user/user.slice';
 
 const App = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChangedListener((user) => {
+        // note that an unsubscribe function is returned from the onAuthStateChangedListener
+        return onAuthStateChangedListener((user) => {
             if (user) {
                 createUserDocumentFromAuth(user);
             }
-            dispatch(setCurrentUser(user));
-        });
 
-        return unsubscribe;
+            /*
+             Ternary operator and an immediately invoked function expression
+             (IIFE) to pick the properties we want from the user object
+            */
+            const pickedUser = user && (({accessToken, email}) => ({accessToken, email}))(user);
+
+            dispatch(setCurrentUser(pickedUser));
+        });
     }, []);
 
     return (
