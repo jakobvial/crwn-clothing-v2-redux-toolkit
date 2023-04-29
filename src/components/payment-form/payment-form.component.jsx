@@ -1,11 +1,19 @@
+import {useState} from "react";
+import {useSelector} from "react-redux";
 import {CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
 
-import Button, {BUTTON_TYPE_CLASSES} from "../button/button.component";
-import {FormContainer, PaymentFormContainer} from "./payment-form.styles";
+import {selectCartTotal} from "../../store/cart/cart.selector";
+import {selectCurrentUser} from "../../store/user/user.selector";
+
+import {BUTTON_TYPE_CLASSES} from "../button/button.component";
+import {FormContainer, PaymentButton, PaymentFormContainer} from "./payment-form.styles";
 
 const PaymentForm = () => {
     const stripe = useStripe(); // This hook is used to initialize Stripe.js with your publishable API key and provides access to the Stripe object.
     const elements = useElements(); // This hook is used to initialize the Elements components.
+    const currentUser = useSelector(selectCurrentUser);
+    const cartTotal = useSelector(selectCartTotal);
+    const [isProcessing, setIsProcessing] = useState(false); // This state is used to disable the Pay now button while the payment is being processed.
 
     const paymentHandler = async (event) => {
         event.preventDefault();
@@ -13,13 +21,14 @@ const PaymentForm = () => {
         if (!stripe || !elements) {
             return;
         }
+        setIsProcessing(true);
 
         const response = await fetch("/.netlify/functions/create-payment-intent", {
             method: "post", // The HTTP method
             headers: { // Additional headers to send to the server
                 "Content-Type": "application/json" // This header is required to send the data in JSON format.
             },
-            body: JSON.stringify({amount: 10000}) // The data to send to the server
+            body: JSON.stringify({amount: cartTotal * 100}) // The data to send to the server
         }).then((res) => res.json());
 
         const {paymentIntent: {client_secret}} = response;
@@ -28,10 +37,12 @@ const PaymentForm = () => {
             payment_method: {
                 card: elements.getElement(CardElement),
                 billing_details: {
-                    name: "Jakob Albrechtsen"
+                    name: currentUser ? currentUser.displayName : "guest"
                 }
             }
         });
+
+        setIsProcessing(false);
 
         if (paymentResult.error) {
             alert(paymentResult.error.message);
@@ -47,7 +58,12 @@ const PaymentForm = () => {
             <FormContainer onSubmit={paymentHandler}>
                 <h2>Credit card payment: </h2>
                 <CardElement/>
-                <Button buttonType={BUTTON_TYPE_CLASSES.inverted}>Pay now</Button>
+                <PaymentButton
+                    isLoading={isProcessing}
+                    buttonType={BUTTON_TYPE_CLASSES.inverted}
+                >
+                    Pay now
+                </PaymentButton>
             </FormContainer>
         </PaymentFormContainer>
     );

@@ -25,7 +25,7 @@ const App = () => {
              Ternary operator and an immediately invoked function expression
              (IIFE) to pick the properties we want from the user object
             */
-            const pickedUser = user && (({accessToken, email}) => ({accessToken, email}))(user);
+            const pickedUser = user && (({accessToken, displayName, email}) => ({accessToken, displayName, email}))(user);
 
             dispatch(setCurrentUser(pickedUser));
         });
