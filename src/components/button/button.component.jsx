@@ -6,6 +6,9 @@ export const BUTTON_TYPE_CLASSES = {
     inverted: 'inverted'
 };
 
+// Description: This function returns a component based on the buttonType prop.
+// Note the use of square brackets to access the object property.
+// Alternatively, access to the object property can be done with dot notation
 const getButton = (buttonType = BUTTON_TYPE_CLASSES.base) =>
     ({
         [BUTTON_TYPE_CLASSES.base]: BaseButton,
