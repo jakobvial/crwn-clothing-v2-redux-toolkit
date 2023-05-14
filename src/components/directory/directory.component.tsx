@@ -2,6 +2,13 @@ import DirectoryItem from '../directory-item/directory-item.component';
 
 import {DirectoryContainer} from './directory.styles';
 
+export type DirectoryCategory = {
+    id: number,
+    title: string,
+    imageUrl: string,
+    route: string
+}
+
 const categories = [
     {
         id: 1,

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 import {useSelector} from "react-redux";
 import {CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
 
@@ -7,6 +7,12 @@ import {selectCurrentUser} from "../../store/user/user.selector";
 
 import {BUTTON_TYPE_CLASSES} from "../button/button.component";
 import {FormContainer, PaymentButton, PaymentFormContainer} from "./payment-form.styles";
+import {StripeCardElement} from "@stripe/stripe-js";
+
+// Type guard function for CardDetails
+const ifValidCardElement = (card: StripeCardElement | null): card is StripeCardElement => {
+    return card !== null;
+}
 
 const PaymentForm = () => {
     const stripe = useStripe(); // This hook is used to initialize Stripe.js with your publishable API key and provides access to the Stripe object.
@@ -15,7 +21,7 @@ const PaymentForm = () => {
     const cartTotal = useSelector(selectCartTotal);
     const [isProcessing, setIsProcessing] = useState(false); // This state is used to disable the Pay now button while the payment is being processed.
 
-    const paymentHandler = async (event) => {
+    const paymentHandler = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (!stripe || !elements) {
@@ -33,9 +39,16 @@ const PaymentForm = () => {
 
         const {paymentIntent: {client_secret}} = response;
 
+        const CardDetails = elements.getElement(CardElement);
+
+        // Type guard for CardDetails
+        if (!ifValidCardElement(CardDetails)) {
+            return;
+        }
+
         const paymentResult = await stripe.confirmCardPayment(client_secret, {
             payment_method: {
-                card: elements.getElement(CardElement),
+                card: CardDetails,
                 billing_details: {
                     name: currentUser ? currentUser.displayName : "guest"
                 }

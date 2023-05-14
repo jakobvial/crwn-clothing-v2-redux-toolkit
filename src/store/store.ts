@@ -11,13 +11,15 @@ const persistConfig = {
     blacklist: ['user']
 };
 
+export type RootState = ReturnType<typeof rootReducer>;
+
 // // Creates a persisted version of the rootReducer using the provided persistConfig
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // // Array containing middleware(s) to be used in the Redux store, filters out any falsy values
-const middleWares = [process.env.NODE_ENV !== 'production' && logger].filter(
-    Boolean
-);
+const middleWares = [
+    process.env.NODE_ENV !== 'production' && logger
+].filter((middleware): middleware is any => Boolean(middleware));
 
 export const store = configureStore({
     reducer: persistedReducer,

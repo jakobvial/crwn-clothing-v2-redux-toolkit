@@ -1,5 +1,8 @@
-require("dotenv").config(); // read .env file if present and add to process.env
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // secret key from .env file
+// read .env file if present and add to process.env
+require("dotenv").config();
+
+// secret key from .env file
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // What it does:
 // 1. Receives a request from client
