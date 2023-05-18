@@ -1,5 +1,6 @@
 import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
+import {useCallback} from "react";
 
 import {selectCartItems, selectIsCartOpen} from '../../store/cart/cart.selector';
 import Button from '../button/button.component';
@@ -14,10 +15,13 @@ const CartDropdown = () => {
     const isCartOpen = useSelector(selectIsCartOpen);
     const navigate = useNavigate();
 
-    const goToCheckoutHandler = () => {
+    // Using useCallback to memoize the function, limiting the number of times the function is initialized.
+    // Using useMemo, instead, would memoize the value returned by the function. This is advisable when the function
+    // is expensive to run.
+    const goToCheckoutHandler = useCallback(() => {
         navigate('/checkout');
         dispatch(setIsCartOpen(!isCartOpen))
-    };
+    }, [isCartOpen]);
 
     return (
         <CartDropdownContainer>
