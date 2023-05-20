@@ -6,7 +6,6 @@ import {Provider} from 'react-redux';
 import App from './App';
 import {persistor, store} from './store/store';
 
-import './index.scss';
 import {PersistGate} from "redux-persist/integration/react";
 
 import {Elements} from "@stripe/react-stripe-js";

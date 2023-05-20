@@ -7,6 +7,7 @@ import {createUserDocumentFromAuth, onAuthStateChangedListener} from "./utils/fi
 import {setCurrentUser} from "./store/user/user.slice";
 import {User} from "firebase/auth";
 import Spinner from "./components/spinner/spinner.component";
+import {GlobalStyle} from "./global.styles";
 
 const Home = lazy(() => import("./routes/home/home.component"));
 const Authentication = lazy(() => import("./routes/authentication/authentication.component"));
@@ -43,6 +44,7 @@ const App = () => {
 
     return (
         <Suspense fallback={<Spinner/>}>
+            <GlobalStyle/>
             <Routes>
                 <Route path="/" element={<Navigation/>}>
                     <Route index element={<Home/>}/>
