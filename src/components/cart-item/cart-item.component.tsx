@@ -14,8 +14,8 @@ const CartItem: FC<CartItemProps> = memo(({cartItem}) => {
             <ItemDetails>
                 <span>{name}</span>
                 <span>
-          {quantity} x ${price}
-        </span>
+                    {quantity} x ${price}
+                </span>
             </ItemDetails>
         </CartItemContainer>
     );
